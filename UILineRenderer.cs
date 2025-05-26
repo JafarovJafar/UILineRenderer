@@ -15,6 +15,9 @@ namespace Radishmouse
         {
             vh.Clear();
 
+            if (points == null)
+                return;
+
             if (points.Length < 2)
                 return;
 
