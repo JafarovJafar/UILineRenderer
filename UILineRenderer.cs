@@ -7,6 +7,8 @@ namespace Radishmouse
     [RequireComponent(typeof(CanvasRenderer))]
     public class UILineRenderer : MaskableGraphic
     {
+        public IReadOnlyList<LineSegment> Segments => segments;
+
         [SerializeField] private List<LineSegment> segments = new();
 
         private float _thickness = 1f;
@@ -45,7 +47,7 @@ namespace Radishmouse
 
         public void SetLooped(int segmentIdx, bool isLooped)
         {
-            if (segments.Count >= segmentIdx)
+            if (segmentIdx >= segments.Count)
                 return;
 
             segments[segmentIdx].SetLooped(isLooped);
