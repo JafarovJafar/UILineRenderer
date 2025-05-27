@@ -11,7 +11,7 @@ namespace Radishmouse
 
         [SerializeField] private List<Vector2> points = new();
 
-        public float thickness = 10f;
+        private float _thickness = 1f;
         public bool center = true;
 
         public void AddPoint(Vector2 point)
@@ -74,19 +74,19 @@ namespace Radishmouse
 
             // Create the start of the segment
             Quaternion point1Rotation = Quaternion.Euler(0, 0, RotatePointTowards(point1, point2) + 90);
-            vertex.position = point1Rotation * new Vector3(-thickness / 2, 0);
+            vertex.position = point1Rotation * new Vector3(-_thickness / 2, 0);
             vertex.position += point1 - offset;
             vh.AddVert(vertex);
-            vertex.position = point1Rotation * new Vector3(thickness / 2, 0);
+            vertex.position = point1Rotation * new Vector3(_thickness / 2, 0);
             vertex.position += point1 - offset;
             vh.AddVert(vertex);
 
             // Create the end of the segment
             Quaternion point2Rotation = Quaternion.Euler(0, 0, RotatePointTowards(point2, point1) - 90);
-            vertex.position = point2Rotation * new Vector3(-thickness / 2, 0);
+            vertex.position = point2Rotation * new Vector3(-_thickness / 2, 0);
             vertex.position += point2 - offset;
             vh.AddVert(vertex);
-            vertex.position = point2Rotation * new Vector3(thickness / 2, 0);
+            vertex.position = point2Rotation * new Vector3(_thickness / 2, 0);
             vertex.position += point2 - offset;
             vh.AddVert(vertex);
 
