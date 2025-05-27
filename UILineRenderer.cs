@@ -14,11 +14,17 @@ namespace Radishmouse
         public float thickness = 10f;
         public bool center = true;
 
-        public void AddPoint(Vector2 point) =>
+        public void AddPoint(Vector2 point)
+        {
             points.Add(point);
+            UpdateGeometry();
+        }
 
-        public void RemovePoint(int index) =>
+        public void RemovePoint(int index)
+        {
             points.RemoveAt(index);
+            UpdateGeometry();
+        }
 
         protected override void OnPopulateMesh(VertexHelper vh)
         {
