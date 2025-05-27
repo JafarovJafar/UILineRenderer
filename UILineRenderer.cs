@@ -7,22 +7,39 @@ namespace Radishmouse
     [RequireComponent(typeof(CanvasRenderer))]
     public class UILineRenderer : MaskableGraphic
     {
-        public IReadOnlyList<Vector2> Points => points;
-
-        [SerializeField] private List<Vector2> points = new();
+        [SerializeField] private List<LineSegment> segments = new();
 
         private float _thickness = 1f;
         public bool center = true;
 
+        public void AddSegment()
+        {
+            segments.Add(new LineSegment());
+        }
+
         public void AddPoint(Vector2 point)
         {
-            points.Add(point);
+            if (segments.Count == 0)
+            {
+                AddSegment();
+            }
+
+            segments[^1].AddPoint(point);
             UpdateGeometry();
         }
 
         public void RemovePoint(int index)
         {
-            points.RemoveAt(index);
+            if (segments.Count == 0)
+                return;
+
+            segments[^1].RemovePoint(index);
+            UpdateGeometry();
+        }
+
+        public void SetThickness(float thickness)
+        {
+            _thickness = thickness;
             UpdateGeometry();
         }
 
@@ -30,30 +47,44 @@ namespace Radishmouse
         {
             vh.Clear();
 
-            if (points == null)
+            if (segments == null)
                 return;
 
-            if (points.Count < 2)
+            if (segments.Count == 0)
                 return;
 
-            for (int i = 0; i < points.Count - 1; i++)
+            for (var segmentIdx = 0; segmentIdx < segments.Count; segmentIdx++)
             {
-                // Create a line segment between the next two points
-                CreateLineSegment(points[i], points[i + 1], vh);
+                var segment = segments[segmentIdx];
+                var points = segment.Points;
 
-                int index = i * 5;
+                if (points == null)
+                    return;
 
-                // Add the line segment to the triangles array
-                vh.AddTriangle(index, index + 1, index + 3);
-                vh.AddTriangle(index + 3, index + 2, index);
+                if (points.Count < 2)
+                    return;
 
-                // These two triangles create the beveled edges
-                // between line segments using the end point of
-                // the last line segment and the start points of this one
-                if (i != 0)
+                var segmentOffset = vh.currentVertCount;
+
+                for (int i = 0; i < points.Count - 1; i++)
                 {
-                    vh.AddTriangle(index, index - 1, index - 3);
-                    vh.AddTriangle(index + 1, index - 1, index - 2);
+                    // Create a line segment between the next two points
+                    CreateLineSegment(points[i], points[i + 1], vh);
+
+                    int index = i * 5 + segmentOffset;
+
+                    // Add the line segment to the triangles array
+                    vh.AddTriangle(index, index + 1, index + 3);
+                    vh.AddTriangle(index + 3, index + 2, index);
+
+                    // These two triangles create the beveled edges
+                    // between line segments using the end point of
+                    // the last line segment and the start points of this one
+                    if (i != 0)
+                    {
+                        vh.AddTriangle(index, index - 1, index - 3);
+                        vh.AddTriangle(index + 1, index - 1, index - 2);
+                    }
                 }
             }
         }
