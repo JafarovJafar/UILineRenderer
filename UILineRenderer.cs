@@ -43,6 +43,14 @@ namespace Radishmouse
             UpdateGeometry();
         }
 
+        public void SetLooped(int segmentIdx, bool isLooped)
+        {
+            if (segments.Count >= segmentIdx)
+                return;
+
+            segments[segmentIdx].SetLooped(isLooped);
+        }
+
         protected override void OnPopulateMesh(VertexHelper vh)
         {
             vh.Clear();
@@ -66,12 +74,12 @@ namespace Radishmouse
 
                 var segmentOffset = vh.currentVertCount;
 
+                var index = segmentOffset;
+
                 for (int i = 0; i < points.Count - 1; i++)
                 {
                     // Create a line segment between the next two points
                     CreateLineSegment(points[i], points[i + 1], vh);
-
-                    int index = i * 5 + segmentOffset;
 
                     // Add the line segment to the triangles array
                     vh.AddTriangle(index, index + 1, index + 3);
@@ -85,6 +93,31 @@ namespace Radishmouse
                         vh.AddTriangle(index, index - 1, index - 3);
                         vh.AddTriangle(index + 1, index - 1, index - 2);
                     }
+
+                    index += 5;
+                }
+
+                if (segment.IsLooped && points.Count > 2)
+                {
+                    var startPoint = points[^1];
+                    var endPoint = points[0];
+
+                    // Create a line segment between the next two points
+                    CreateLineSegment(startPoint, endPoint, vh);
+
+                    // Add the line segment to the triangles array
+                    vh.AddTriangle(index, index + 1, index + 3);
+                    vh.AddTriangle(index + 3, index + 2, index);
+
+                    // These two triangles create the beveled edges
+                    // between line segments using the end point of
+                    // the last line segment and the start points of this one
+                    vh.AddTriangle(index, index - 1, index - 3);
+                    vh.AddTriangle(index + 1, index - 1, index - 2);
+
+                    var lastVertIdx = vh.currentVertCount - 1;
+                    vh.AddTriangle(0, lastVertIdx, lastVertIdx - 2);
+                    vh.AddTriangle(1, lastVertIdx, lastVertIdx - 1);
                 }
             }
         }
