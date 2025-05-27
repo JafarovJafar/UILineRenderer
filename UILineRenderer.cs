@@ -39,6 +39,12 @@ namespace Radishmouse
             UpdateGeometry();
         }
 
+        public void ClearPoints()
+        {
+            segments.Clear();
+            UpdateGeometry();
+        }
+
         public void SetThickness(float thickness)
         {
             _thickness = thickness;
