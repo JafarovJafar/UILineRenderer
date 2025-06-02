@@ -19,6 +19,17 @@ namespace Radishmouse
             segments.Add(new LineSegment());
         }
 
+        public void AddPoint(int idx, Vector2 point)
+        {
+            if (segments.Count == 0)
+            {
+                AddSegment();
+            }
+
+            segments[^1].AddPoint(idx, point);
+            UpdateGeometry();
+        }
+
         public void AddPoint(Vector2 point)
         {
             if (segments.Count == 0)

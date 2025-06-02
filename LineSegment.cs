@@ -13,6 +13,9 @@ namespace Radishmouse
         [SerializeField] private List<Vector2> points = new();
         [SerializeField] private bool isLooped;
 
+        public void AddPoint(int idx, Vector2 point) =>
+            points.Insert(idx, point);
+
         public void AddPoint(Vector2 point) =>
             points.Add(point);
 
